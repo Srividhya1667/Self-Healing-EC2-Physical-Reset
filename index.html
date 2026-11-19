@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HELIOS | Self-Healing Cloud Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">H</div>
+            <div>
+                <h1>HELIOS</h1>
+                <span>SELF-HEALING CLOUD</span>
+            </div>
+        </div>
+
+        <p class="side-label">MAIN MENU</p>
+
+        <nav>
+            <a href="#dashboard" class="nav-item active">◈ Dashboard</a>
+            <a href="#instances" class="nav-item">▣ EC2 Instances</a>
+            <a href="#create-instance" class="nav-item">＋ Create Instance</a>
+            <a href="#recovery" class="nav-item">⟳ Self-Healing</a>
+            <a href="#infrastructure" class="nav-item">☁ Infrastructure</a>
+            <a href="#monitoring" class="nav-item">▥ CloudWatch</a>
+            <a href="#activity" class="nav-item">◷ System Activity</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-mini">
+                <span class="live-dot"></span>
+                <div>
+                    <strong>Monitoring System</strong>
+                    <small>HELIOS Dashboard</small>
+                </div>
+            </div>
+            <div class="sidebar-foot">AWS CLOUD PLATFORM</div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="dashboard">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <span class="eyebrow">CLOUD MANAGEMENT / OVERVIEW</span>
+                <h2>Infrastructure Dashboard</h2>
+                <p class="subheading">Monitor your cloud infrastructure in real time.</p>
+            </div>
+
+            <div class="top-actions">
+                <div class="connection-pill" id="connectionPill">
+                    <span class="status-dot"></span>
+                    <span id="connectionLabel">Connecting...</span>
+                    <span id="connectionText" style="display:none;">Connecting...</span>
+                </div>
+                <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
+            </div>
+        </header>
+
+        <!-- HERO -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <div class="hero-kicker">
+                    <span class="live-dot"></span>
+                    CLOUD INFRASTRUCTURE MONITORING
+                </div>
+
+                <h3>Welcome to <em>HELIOS</em></h3>
+
+                <p>
+                    A cloud monitoring and management dashboard designed to observe
+                    EC2 health, Auto Scaling capacity, and CloudWatch performance
+                    metrics through AWS services.
+                </p>
+            </div>
+
+            <div class="hero-graphic">
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+                <div class="orbit-core">H</div>
+                <span class="orbit-node node-one"></span>
+                <span class="orbit-node node-two"></span>
+                <span class="orbit-node node-three"></span>
+            </div>
+
+            <div class="hero-footer">
+                <span>SYSTEM STATUS</span>
+                <strong id="workflowTag">Waiting for AWS data...</strong>
+            </div>
+        </section>
+
+        <!-- INFRASTRUCTURE HEALTH -->
+        <section class="section-block">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">RESOURCE OVERVIEW</span>
+                    <h3>Infrastructure Health</h3>
+                </div>
+                <span class="updated-label" id="lastUpdated">Last updated: Waiting...</span>
+            </div>
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon purple">▣</div>
+                        <span class="metric-category">COMPUTE</span>
+                    </div>
+                    <p class="metric-name">Amazon EC2</p>
+                    <h3 id="instanceStatus">Loading...</h3>
+                    <p class="metric-detail mono" id="instanceId">Instance ID: Loading...</p>
+                    <div class="metric-bottom">
+                        <span class="small-dot muted" id="ec2Dot"></span>
+                        <span id="ec2HealthText">Checking AWS status</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon blue">⟳</div>
+                        <span class="metric-category">SCALING</span>
+                    </div>
+                    <p class="metric-name">Auto Scaling Group</p>
+                    <h3 id="asgStatus">Loading...</h3>
+                    <p class="metric-detail">HELIOS-ASG</p>
+                    <div class="metric-bottom">
+                        <span class="small-dot muted" id="asgDot"></span>
+                        <span id="asgHealthText">Checking AWS status</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon orange">▤</div>
+                        <span class="metric-category">CAPACITY</span>
+                    </div>
+                    <p class="metric-name">Healthy Instances</p>
+                    <h3 id="healthyCount">--</h3>
+                    <p class="metric-detail">Instances reporting healthy</p>
+                    <div class="metric-bottom">
+                        <span class="small-dot muted" id="healthyDot"></span>
+                        <span id="healthyText">Waiting for AWS data</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon green">⌁</div>
+                        <span class="metric-category">HARDWARE</span>
+                    </div>
+                    <p class="metric-name">ESP32 Device</p>
+                    <h3 id="espStatus">Not Connected</h3>
+                    <p class="metric-detail">Physical reset button</p>
+                    <div class="metric-bottom">
+                        <span class="small-dot muted"></span>
+                        <span>Hardware integration pending</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- EC2 INSTANCE MANAGEMENT -->
+        <section class="panel instance-panel" id="instances">
+            <div class="panel-heading">
+                <div>
+                    <span class="eyebrow">AWS COMPUTE MANAGEMENT</span>
+                    <h3>EC2 Instance Management</h3>
+                </div>
+                <span class="tag">LIVE AWS INVENTORY</span>
+            </div>
+
+            <div class="instance-summary">
+                <div>
+                    <span>Total Instances</span>
+                    <strong id="totalInstances">--</strong>
+                </div>
+                <div>
+                    <span>Running</span>
+                    <strong id="runningInstances">--</strong>
+                </div>
+                <div>
+                    <span>Stopped</span>
+                    <strong id="stoppedInstances">--</strong>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NAME / INSTANCE ID</th>
+                            <th>TYPE</th>
+                            <th>STATE</th>
+                            <th>PRIVATE IP</th>
+                            <th>PUBLIC IP</th>
+                            <th>AVAILABILITY ZONE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="instanceRows">
+                        <tr>
+                            <td colspan="6">Loading AWS instances...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="log-note" id="instanceMessage">
+                Retrieving EC2 inventory from AWS.
+            </p>
+        </section>
+
+        <!-- EC2 INSTANCE CREATION -->
+        <section class="panel instance-panel" id="create-instance">
+
+            <div class="panel-heading">
+                <div>
+                    <span class="eyebrow">AWS COMPUTE MANAGEMENT</span>
+                    <h3>Create EC2 Instance</h3>
+                </div>
+                <span class="tag">SIMULATION MODE</span>
+            </div>
+
+            <p class="log-note">
+                Configure a new EC2 instance. This is a simulation only.
+                No real AWS resources will be created.
+            </p>
+
+            <form id="createInstanceForm" class="instance-form">
+
+                <div class="form-group">
+                    <label for="newInstanceName">Instance Name</label>
+                    <input type="text" id="newInstanceName"
+                        placeholder="HELIOS-Server-01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newInstanceType">Instance Type</label>
+                    <select id="newInstanceType">
+                        <option value="t3.micro">t3.micro</option>
+                        <option value="t3.small">t3.small</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="newInstanceOS">Operating System</label>
+                    <select id="newInstanceOS">
+                        <option value="Amazon Linux 2023">Amazon Linux 2023</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="newInstanceCount">Number of Instances</label>
+                    <select id="newInstanceCount">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="primary-btn">
+                    Create Instance
+                </button>
+
+            </form>
+
+            <div id="createInstanceResult" class="log-note" aria-live="polite">
+                No simulated instances created yet.
+            </div>
+
+        </section>
+
+
+        <!-- INFRASTRUCTURE AND MONITORING -->
+        <section class="content-grid">
+
+            <!-- INFRASTRUCTURE MAP -->
+            <div class="panel" id="infrastructure">
+                <div class="panel-heading">
+                    <div>
+                        <span class="eyebrow">SYSTEM ARCHITECTURE</span>
+                        <h3>Infrastructure Map</h3>
+                    </div>
+                    <span class="tag">HELIOS FLOW</span>
+                </div>
+
+                <div class="architecture">
+                    <div class="arch-node">
+                        <div class="arch-icon device-icon">🔘</div>
+                        <strong>ESP32</strong>
+                        <small>Reset Button</small>
+                        <span class="node-status pending">Not Connected</span>
+                    </div>
+
+                    <div class="arch-connector">
+                        <span>IoT Event</span><i></i>
+                    </div>
+
+                    <div class="arch-node">
+                        <div class="arch-icon iot-icon">☁</div>
+                        <strong>AWS IoT</strong>
+                        <small>Device Events</small>
+                        <span class="node-status pending">Not Connected</span>
+                    </div>
+
+                    <div class="arch-connector">
+                        <span>Trigger</span><i></i>
+                    </div>
+
+                    <div class="arch-node">
+                        <div class="arch-icon asg-icon">⚙</div>
+                        <strong>Auto Scaling</strong>
+                        <small id="mapAsgStatus">Loading...</small>
+                        <span class="node-status">AWS Resource</span>
+                    </div>
+
+                    <div class="arch-connector">
+                        <span>Launch</span><i></i>
+                    </div>
+
+                    <div class="arch-node">
+                        <div class="arch-icon ec2-icon">🖥</div>
+                        <strong>Amazon EC2</strong>
+                        <small id="mapEc2Status">Loading...</small>
+                        <span class="node-status">
+                            <span id="mapInstanceId">Loading...</span>
+                        </span>
+                    </div>
+                </div>
+
+                <p class="architecture-note">
+                    <strong>Architecture:</strong>
+                    ESP32 → AWS IoT Core → Auto Scaling → EC2.
+                    This represents the planned recovery workflow.
+                    ESP32 and IoT Core are not connected yet.
+                </p>
+            </div>
+
+            <!-- CLOUDWATCH -->
+            <div class="panel monitoring-panel" id="monitoring">
+                <div class="panel-heading">
+                    <div>
+                        <span class="eyebrow">AWS PERFORMANCE</span>
+                        <h3>CloudWatch Metrics</h3>
+                    </div>
+                    <span class="tag">LIVE DATA</span>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <span>CPU UTILIZATION</span>
+                        <strong id="cpuValue">--%</strong>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                    <p id="cpuNote">Waiting for CloudWatch data</p>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <span>NETWORK IN</span>
+                        <strong id="networkIn">--</strong>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="networkInChart"></canvas>
+                    </div>
+                    <p id="networkInNote">Waiting for CloudWatch data</p>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <span>NETWORK OUT</span>
+                        <strong id="networkOut">--</strong>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="networkOutChart"></canvas>
+                    </div>
+                    <p id="networkOutNote">Waiting for CloudWatch data</p>
+                </div>
+
+                <div class="cloudwatch-note">
+                    <span class="info-symbol">i</span>
+                    <p>
+                        Metrics are retrieved from AWS CloudWatch through the
+                        HELIOS API. Values refresh automatically every 30 seconds.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SYSTEM ACTIVITY -->
+        <section class="panel recovery-panel" id="activity">
+            <div class="panel-heading">
+                <div>
+                    <span class="eyebrow">MONITORING HISTORY</span>
+                    <h3>System Activity Log</h3>
+                </div>
+                <span class="tag">RECENT EVENTS</span>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>EVENT</th>
+                            <th>DESCRIPTION</th>
+                            <th>TIME</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="eventRows">
+                        <tr>
+                            <td>Dashboard Started</td>
+                            <td>HELIOS monitoring interface loaded</td>
+                            <td>Waiting...</td>
+                            <td>
+                                <span class="event-badge pending">PENDING</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="log-note">
+                This log displays dashboard refresh activity.
+                It is not a persistent AWS recovery event history.
+            </p>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>HELIOS © 2026 | SELF-HEALING CLOUD</span>
+            <span>EC2 • AUTO SCALING • CLOUDWATCH</span>
+        </footer>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
